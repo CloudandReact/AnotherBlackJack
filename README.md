@@ -1,8 +1,10 @@
 Java BlackJack
 ===
 
+A simple command line Black Jack game.
+
 To run:
 
     git clone git://github.com/jtruelove/BlackJack ~/BlackJack
-    cd $!
-    java -jar BlackJack.jar
+    cd BlackJack
+    java -jar bin/BlackJack.jar
