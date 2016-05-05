@@ -5,73 +5,85 @@ public class Hand {
 
 	private ArrayList<Card> cards = new ArrayList<Card>();
 	private int bet;
-	private final int MAX=5;
-	private int aces=0;
-	boolean finished=false;
-	public Hand(Card c1,Card c2,int bet){
+	private final int MAX = 5;
+	private int aces = 0;
+	boolean finished = false;
+
+	public Hand(Card c1, Card c2, int bet) {
 		cards.add(c1);
 		cards.add(c2);
-		if(bet>0){
+		if (bet > 0) {
 			this.bet = bet;
-		}
-		else{
+		} else {
 			bet = 0;
 		}
 
 	}
-	public int getBet(){
+
+	public int getBet() {
 		return bet;
 	}
-	public void addCard(Card c){
-		if(getSize()<MAX){
+
+	public void addCard(Card c) {
+		if (getSize() < MAX) {
 			cards.add(c);
-		}
-		else{
+		} else {
 			System.out.println("hand size is 5 cannot add a card");
 			finished = true;
 		}
+		if (isBusted()) {
+			System.err.println("hand is busted");
+		}
 	}
-	public int getSize(){
+
+	public int getSize() {
 		return cards.size();
 	}
-	public void setFinished(boolean finished){
+
+	public void setFinished(boolean finished) {
 		this.finished = finished;
 	}
-	public boolean isFinished(){
+
+	public boolean isFinished() {
 		finished = finished || isBusted();
 		return finished;
 	}
-	public int value(){
-		int hValue=0;
-		for(Card c:cards){
+
+	public int value() {
+		int hValue = 0;
+		aces = 0;
+		for (Card c : cards) {
 			hValue += c.value();
-			if(c.getFace()==Face.ACE){
+			if (c.getFace() == Face.ACE) {
 				aces++;
 			}
 
 		}
-		while(hValue>21 && aces>0){
-			hValue = hValue-10;
+		while (hValue > 21 && aces > 0) {
+			hValue = hValue - 10;
 			aces--;
 		}
 		return hValue;
 	}
-	public boolean isBusted(){
-		return value()>21;
-	}
-	//handling cases dealer and player states of game and string conversion
-	public String toString(){
-		String handInfo ="";
 
-		for(int i=0;i<cards.size();i++){
-			if(i==1 && bet==0 &&!isFinished()){
+	public boolean isBusted() {
+		return value() > 21;
+	}
+
+	// handling cases dealer and player states of game and string conversion
+	public String toString() {
+		String handInfo = "";
+
+		for (int i = 0; i < cards.size(); i++) {
+			if (i == 1 && bet == 0 && !isFinished()) {
 
 				continue;
 			}
-			handInfo+= cards.get(i).toString() + ", ";
+			handInfo += cards.get(i).toString() + ", ";
 		}
-		//need to check all players finished game state
-		handInfo +=  bet==0  &&!(CurrentState.s==State.FINISHED)? " card hidden ": ("\nvalue "+value());
+		// need to check all players finished game state
+		handInfo += bet == 0 && !(CurrentState.s == State.FINISHED) ? " card hidden "
+				: ("\nvalue " + value()) + "\n";
 		return handInfo;
 	}
 

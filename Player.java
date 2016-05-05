@@ -17,7 +17,6 @@ public class Player {
 	public int bet(int b) {
 		if (balance >= b) {
 			currentBets += b;
-			balance = balance - b;
 			addToWinning(-b);
 			return b;
 		} else {
@@ -35,15 +34,30 @@ public class Player {
 	}
 
 	public void incrementHands() {
+		if (!(currentHand < hands.size())) {
+			System.err.println("out of bounds");
+		}
+		hands.get(currentHand).setFinished(true);
 		currentHand++;
 	}
 
-	public boolean finished() {
+	public boolean isFinished() {
 		for (int i = 0; i < hands.size(); i++) {
 			if (hands.get(i).isFinished()) {
 
 			} else {
 				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean isBusted() {
+		for (int i = 0; i < hands.size(); i++) {
+			if (!hands.get(i).isBusted()) {
+				return false;
+			} else {
+
 			}
 		}
 		return true;
@@ -60,6 +74,11 @@ public class Player {
 
 	public void addHand(Hand h) {
 		hands.add(h);
+
+	}
+
+	public void addCard(Card c) {
+		hands.get(currentHand).addCard(c);
 	}
 
 	public int getHandSize() {
@@ -69,6 +88,15 @@ public class Player {
 	public void clearHands() {
 		hands.clear();
 		currentHand = 0;
+		currentBets = 0;
+	}
+
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		for (Hand h : hands) {
+			sb.append(h.toString());
+		}
+		return sb.toString();
 	}
 
 }

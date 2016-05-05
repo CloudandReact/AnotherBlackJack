@@ -34,33 +34,38 @@ public class Main {
 		// deck will eventually become empty
 		while (!exit) {
 			System.out.println("Number of player hands :");
-			int nHands=keyboard.nextInt();
-			for(int i=0;i<nHands;i++){
-				
+			int nHands = keyboard.nextInt();
+			for (int i = 0; i < nHands; i++) {
+				Hand pHand = new Hand(deck.deal(), deck.deal(), p.bet(10));
+				p.addHand(pHand);
 			}
 			Hand dHand = new Hand(deck.deal(), deck.deal(), 0);
-			Hand pHand = new Hand(deck.deal(), deck.deal(), p.bet(10));
+
 			dealer.setHand(dHand);
-			p.addHand(pHand);
+
 			System.out.println("dealer hand " + dHand);
 			// loop for multiple players
 
 			// add while loop here for all hands
-			while (!pHand.isFinished()) {
-				System.out.println(pHand);
+			while (!players.get(0).isFinished()) {
+				System.out.println(players.get(0));
 				System.out
-						.println("Player what would you like to do 0 stay 1 for hit");
+				.println("Player what would you like to do 0 stay 1 for hit");
 				int response = keyboard.nextInt();
+				Hand pHand = players.get(0).getCurrentHand();
 				if (response == 0) {
-					pHand.setFinished(true);
+					players.get(0).incrementHands();
 				} else {
 					pHand.addCard(deck.deal());
+					if(pHand.isFinished()){
+						players.get(0).incrementHands();
+					}
 
 				}
 			}
 			CurrentState.s = State.FINISHED;
 			// handle loop through multiple hands
-			if (pHand.isFinished() && !pHand.isBusted()) {
+			if (players.get(0).isFinished() && !players.get(0).isBusted()) {
 				// dealer time dealer vs dHand how to handle 17 check
 				while (!dHand.isFinished()) {
 					dealer.addCard(deck.deal());
@@ -69,7 +74,7 @@ public class Main {
 
 				System.out.println("dealer hand " + dHand);
 				// loop for multiple players
-				System.out.println(" player hand " + pHand);
+				System.out.println(" player hand " + players.get(0));
 				util.calculate(players, dealer);
 				System.out.println("player balance " + p.getBalance());
 
@@ -77,7 +82,7 @@ public class Main {
 				// make another while loop
 				System.out.println("dealer hand " + dHand);
 				// loop for multiple players
-				System.out.println(" player hand " + pHand);
+				System.out.println(" player hand " + players.get(0));
 				util.calculate(players, dealer);
 				System.out.println("player balance " + p.getBalance());
 			}
