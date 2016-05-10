@@ -32,7 +32,7 @@ public class Hand {
 			finished = true;
 		}
 		if (isBusted()) {
-			System.err.println("hand is busted");
+			System.err.println("hand is busted value is" + value());
 		}
 	}
 

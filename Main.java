@@ -20,52 +20,71 @@ public class Main {
 		 * Deck d = new Deck(5); for(int i=0;i<52*5;i++){
 		 * System.out.println(d.deal()); }
 		 */
-
+		Scanner keyboard = new Scanner(System.in);
 		Deck deck = new Deck();
 		Dealer dealer = new Dealer();
-		Player p = new Player(100);
+
 		ArrayList<Player> players = new ArrayList<Player>();
-		players.add(p);
+		System.out.println("enter number of players");
+		int pCount = keyboard.nextInt();
+		for (int i = 0; i < pCount; i++) {
+			Player p = new Player(100);
+			players.add(p);
+		}
+
 		// could make it static will see
 		Utility util = new Utility();
-		Scanner keyboard = new Scanner(System.in);
+
 		boolean exit = false;
 		CurrentState.s = State.DEALING;
 		// deck will eventually become empty
 		while (!exit) {
-			System.out.println("Number of player hands :");
-			int nHands = keyboard.nextInt();
-			for (int i = 0; i < nHands; i++) {
-				Hand pHand = new Hand(deck.deal(), deck.deal(), p.bet(10));
-				p.addHand(pHand);
-			}
 			Hand dHand = new Hand(deck.deal(), deck.deal(), 0);
-
 			dealer.setHand(dHand);
+			for (Player pDeal : players) {
 
-			System.out.println("dealer hand " + dHand);
+				System.out.println("Number of player hands :");
+				int nHands = keyboard.nextInt();
+				for (int i = 0; i < nHands; i++) {
+					Hand pHand = new Hand(deck.deal(), deck.deal(),
+							pDeal.bet(10));
+					pDeal.addHand(pHand);
+				}
+			}
+
 			// loop for multiple players
 
 			// add while loop here for all hands
-			while (!players.get(0).isFinished()) {
-				System.out.println(players.get(0));
-				System.out
-				.println("Player what would you like to do 0 stay 1 for hit");
-				int response = keyboard.nextInt();
-				Hand pHand = players.get(0).getCurrentHand();
-				if (response == 0) {
-					players.get(0).incrementHands();
-				} else {
-					pHand.addCard(deck.deal());
-					if(pHand.isFinished()){
-						players.get(0).incrementHands();
-					}
+			for (Player pPlay : players) {
 
+				while (!pPlay.isFinished()) {
+					System.out.println(pPlay);
+					System.out
+							.println("Player what would you like to do 0 stay 1 for hit");
+					int response = keyboard.nextInt();
+					Hand pHand = pPlay.getCurrentHand();
+					if (response == 0) {
+						pPlay.incrementHands();
+					} else {
+						pHand.addCard(deck.deal());
+						if (pHand.isFinished()) {
+							pPlay.incrementHands();
+						}
+
+					}
 				}
 			}
+
 			CurrentState.s = State.FINISHED;
 			// handle loop through multiple hands
-			if (players.get(0).isFinished() && !players.get(0).isBusted()) {
+			boolean handAlive = false;
+			for (Player p : players) {
+				if (p.isFinished() && !p.isBusted()) {
+					handAlive = true;
+				}
+			}
+
+			if (handAlive) {
 				// dealer time dealer vs dHand how to handle 17 check
 				while (!dHand.isFinished()) {
 					dealer.addCard(deck.deal());
@@ -76,15 +95,19 @@ public class Main {
 				// loop for multiple players
 				System.out.println(" player hand " + players.get(0));
 				util.calculate(players, dealer);
-				System.out.println("player balance " + p.getBalance());
 
 			} else {
 				// make another while loop
 				System.out.println("dealer hand " + dHand);
 				// loop for multiple players
-				System.out.println(" player hand " + players.get(0));
+				for (Player p : players) {
+					System.out.println(" player hand " + p);
+				}
+
 				util.calculate(players, dealer);
-				System.out.println("player balance " + p.getBalance());
+				for (Player p : players) {
+					System.out.println("player balance " + p.getBalance());
+				}
 			}
 			System.out.println("would you like to exit ? write exit");
 			keyboard.nextLine();
